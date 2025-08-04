@@ -6,10 +6,19 @@
 #define LOGIC_H
 
 #include "Field.h"
+#include "../TicTacToeUI/FieldWindow.h"
 
 class Logic {
     public:
     Logic(Field stat)
+    {
+        status=stat;
+        currentPlayer=1;
+        move_cnt = 0;
+        game_open = false;
+    }
+    
+    Logic(Ui::FieldWindow stat)
     {
         status=stat;
         currentPlayer=1;
