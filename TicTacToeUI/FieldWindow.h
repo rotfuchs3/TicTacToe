@@ -2,9 +2,13 @@
 
 #include "../src/LogicSlave.h"
 #include <QMainWindow>
+#include <QMenu>
+#include <QAction>
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
+#include <QIcon>
+#include <QMenuBar>
 #include <iostream>
 #include <string>
 
@@ -33,20 +37,32 @@ public:
 
 private:
     QPushButton *fieldButtons[9];
-    short currentPlayer=1;
-    char player_symbol1,player_symbol2;
-
     template<typename PointerToMemberFunction>
     QPushButton *createButton(const QString &text, const PointerToMemberFunction &member);
     QLabel* statusMessage;
+    QMenu *game;
+    QAction *aNewGame;
+    QAction *aRevert;
+    QAction *aChangePlayerSymbol;
+
+
+    void createActions();
+    void createMenus();
+
+    //helper for the game logic
+    short currentPlayer=1;
+    char player_symbol1,player_symbol2;
     void change_player_symbol(unsigned player,char symbol);
     void nextPlayer();
+
+
 
 
 private slots:
     void fieldClicked();
     //void revertClicked();
-    void menuSelected();
-
+    void menuNewGame();
+    void menuRevert();
+    void menuChangePlayerSymbol();
 
 };

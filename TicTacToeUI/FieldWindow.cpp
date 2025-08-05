@@ -21,6 +21,9 @@ FieldWindow::FieldWindow(QWidget *parent)
     // adding the status line below the grid
     mainLayout->addWidget(statusMessage,3,0,1,3);
 
+    createActions();
+    createMenus();
+
     setLayout(mainLayout);
 
     setWindowTitle(tr("TicTacToe"));
@@ -31,6 +34,30 @@ FieldWindow::FieldWindow(QWidget *parent)
 FieldWindow::~FieldWindow()
 {
     delete gameState;
+}
+
+void FieldWindow::createActions(){
+    aNewGame = new QAction(QIcon::Normal,tr("&New Game"), this);
+    aNewGame->setShortcuts(QKeySequence::New);
+    aNewGame->setStatusTip(tr("Create a new Game"));
+    connect(aNewGame, &QAction::triggered, this, &FieldWindow::menuNewGame);
+
+    aRevert = new QAction(QIcon::Normal,tr("Revert"), this);
+    aNewGame->setShortcuts(QKeySequence::New);
+    aNewGame->setStatusTip(tr("Revert last move"));
+    connect(aNewGame, &QAction::triggered, this, &FieldWindow::menuRevert);
+
+    aRevert = new QAction(QIcon::Normal,tr("Change Player Symbol"), this);
+    aNewGame->setShortcuts(QKeySequence::New);
+    aNewGame->setStatusTip(tr("Change the symbole of a chosen player"));
+    connect(aNewGame, &QAction::triggered, this, &FieldWindow::menuChangePlayerSymbol);
+}
+
+void FieldWindow::createMenus(){
+    game = menuBar()->addMenu(tr("&Game"));
+    game->addAction(aNewGame);
+    game->addAction(aRevert);
+    game->addAction(aChangePlayerSymbol);
 }
 
 void FieldWindow::change_player_symbol(unsigned player,char symbol)
@@ -50,6 +77,16 @@ void FieldWindow::newStatusMsg(std::string text)
 {
     statusMessage->setText(QString::fromStdString(text));
 }
+
+template<typename PointerToMemberFunction>
+QPushButton* FieldWindow::createButton(const QString &text, const PointerToMemberFunction &member)
+{
+    QPushButton *button = new QPushButton(text);
+    connect(button, &QPushButton::clicked, this, member);
+    return button;
+}
+
+//------------------slots-----------------------
 
 void FieldWindow::fieldClicked()
 {
@@ -89,16 +126,19 @@ void FieldWindow::fieldClicked()
         }
     }
 }
-void FieldWindow::menuSelected()
+void FieldWindow::menuNewGame()
 {
 
 }
 
-template<typename PointerToMemberFunction>
-QPushButton* FieldWindow::createButton(const QString &text, const PointerToMemberFunction &member)
+void FieldWindow::menuRevert()
 {
-    QPushButton *button = new QPushButton(text);
-    connect(button, &QPushButton::clicked, this, member);
-    return button;
+
 }
+
+void FieldWindow::menuChangePlayerSymbol()
+{
+
+}
+
 
