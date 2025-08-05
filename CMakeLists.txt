@@ -12,4 +12,6 @@ add_executable(TicTacToe main.cpp
         src/Logic.cpp
         src/Logic.h
         src/FieldUI.cpp
-        src/FieldUI.h)
+        src/FieldUI.h
+        src/LogicSlave.cpp
+        src/LogicSlave.h)

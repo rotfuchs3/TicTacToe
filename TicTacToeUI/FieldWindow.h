@@ -4,7 +4,9 @@
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
-#include "../src/Field.h"
+#include <iostream>
+#include "../src/LogicSlave.h"
+#include <string>
 //#include "../src/Logic.h"
 
 QT_BEGIN_NAMESPACE
@@ -18,22 +20,28 @@ class FieldWindow : public QWidget
 public:
     FieldWindow(QWidget *parent = nullptr);
     ~FieldWindow();
-    //Logic gameState;
+    LogicSlave gameState;
 
-    char player_symbol1,player_symbol2;
     void move(unsigned x, unsigned y,unsigned player);
     //void revert();
     void print_board();
     unsigned get_borard_value(unsigned x, unsigned y);
-    void set_symbol_player(int player,char symbol);
     void clear_borard();
+    void newStatusMsg(std::string text);
 
 
 private:
     Ui::FieldWindow *ui;
     QPushButton *fieldButtons[9];
+    short currentPlayer=1;
+    char player_symbol1,player_symbol2;
+
     template<typename PointerToMemberFunction>
     QPushButton *createButton(const QString &text, const PointerToMemberFunction &member);
+    QLabel* statusMessage;
+    void change_player_symbol(unsigned player,char symbol);
+    void nextPlayer();
+
 
 private slots:
     void fieldClicked();

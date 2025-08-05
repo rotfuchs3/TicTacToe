@@ -1,22 +1,38 @@
 //
-// Created by skwasigr on 14.06.25.
+// Created by skwasigr on 05.08.25.
 //
 
-#include "Logic.h"
-#include <limits>
-#include <iostream>
+#include "LogicSlave.h"
 
-void Logic::start_game(){
-    status.clear_borard();
-    status.print_board();
+int LogicSlave::start_game(){
+
+    //status.clear_borard();
     game_open = true;
     while (game_open)
-        wait_for_move();
-
+    return 1;
 }
 
 
-void Logic::wait_for_move(){
+void LogicSlave::wait_for_move(){
+/*     legal_move = check_legal_move(row,col);
+        if(legal_move==1) std::cout << "The input is not in the range (1-3)"<<std::endl;
+        if(legal_move==2) std::cout << "The selected field is already picked"<<std::endl;
+    }while(legal_move==1 || legal_move==2 );
+    // all fine but for the array one indecies starting with 0
+    status.move(row-1,col-1,currentPlayer);
+    move_cnt++;
+    status.print_board();
+    unsigned you_won = check_board_win();
+    std::cout<<"Make you move Player "<<currentPlayer<<"! Row(1-3): ";
+            std::cin>>row;
+
+//check if leagal moves
+        if(legal_move==2) std::cout << "The selected field is already picked"<<std::endl;
+    }while(legal_move==1 || legal_move==2 );
+    // all fine but for the array one indecies starting with 0
+    status.move(row-1,col-1,currentPlayer);
+    move_cnt++;
+    statuvoid Logic::wait_for_move(){
     unsigned row, col,legal_move;
     std::cout<<"For changing the settings please Enter for row or column 10"<<std::endl;
     do{
@@ -48,6 +64,8 @@ void Logic::wait_for_move(){
     move_cnt++;
     status.print_board();
     unsigned you_won = check_board_win();
+s.print_board();
+    unsigned you_won = check_board_win();
 
     if(you_won!=0){
         std::cout<<"Grats, Player "<<currentPlayer<<", you win!\n"<<std::endl;
@@ -61,29 +79,34 @@ void Logic::wait_for_move(){
         std::cout<<"Its a tie again \n"<<std::endl;
     }
 
-    nextPlayer();
+    nextPlayer(); */
 }
+
+void LogicSlave::move(unsigned x, unsigned y,unsigned player){
+    if (player == 1 && x<3 && y<3)
+    {
+        board[x][y] = player;
+    } else if (player == 2 && x<3 && y<3)
+    {
+        board[x][y] = player;
+    }
+}
+
 
 /**
  * checks if the input is a legal move
  * @param row of the move
- * @param col umn of the move
+ * @param col umn of the moveField
  * @return status of these move: 0: move is legal, 1: move out of bounce (1-3), 2: field already blocked
  */
-unsigned Logic::check_legal_move(unsigned row, unsigned col){
-    if (row > 3 || col > 3 || row < 1 || col < 1) return 1;
-    unsigned cell = status.get_borard_value(row-1,col-1);
+unsigned LogicSlave::check_legal_move(unsigned row, unsigned col) const
+{
+    if (row > 3 || col > 3 || row < 0 || col < 0) return 1;
+    unsigned cell = board[row][col];
     if (cell==1||cell==2) return 2;
 
     //all fine
     return 0;
-}
-
-void Logic::change_player_symbol(unsigned player,char symbol)
-{
-    if (player == 1) status.player_symbol1 =symbol;
-    else if (player == 2) status.player_symbol2 =symbol;
-    else std::cout << "Not a valid player selected for symbol change";
 }
 
 void Logic::open_settings(){
@@ -143,7 +166,7 @@ void Logic::end_game(){
  * check if one player wins
  * @return 0: nobody won 1: player1 wins 2: player2 wins
  */
-unsigned Logic::check_board_win()
+unsigned LogicSlave::check_board_win()
 {
     unsigned board[3][3];
 
@@ -177,9 +200,4 @@ unsigned Logic::check_board_win()
 
     // no win on the board
     return 0;
-}
-
-void Logic::nextPlayer(){
-    if (currentPlayer==1) { currentPlayer=2; }
-    else if (currentPlayer==2) { currentPlayer=1; }
 }

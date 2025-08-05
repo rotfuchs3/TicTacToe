@@ -1,14 +1,14 @@
 #include "FieldWindow.h"
 
 FieldWindow::FieldWindow(QWidget *parent)
-    : QWidget(parent)//t, gameState(Logic(*this))
+    : QWidget(parent), gameState(LogicSlave())
     //, ui(new Ui::FieldWindow)
 {
     //ui->setupUi(this);
     for (int i = 0; i < 9; ++i)
             fieldButtons[i] = createButton(QString::number(i),&FieldWindow::fieldClicked);
 
-    QLabel* statusMessage = new QLabel(tr("Let the game start"));
+    statusMessage = new QLabel(tr("Let the game start"));
 
     QGridLayout *mainLayout = new QGridLayout;
     mainLayout->setSizeConstraint(QLayout::SetFixedSize);
@@ -31,13 +31,49 @@ FieldWindow::~FieldWindow()
     //delete ui;
 }
 
+void FieldWindow::change_player_symbol(unsigned player,char symbol)
+{
+    if (player == 1) player_symbol1 =symbol;
+    else if (player == 2) player_symbol2 =symbol;
+    else newStatusMsg("You can only change the symbol of player 1 or 2");
+}
+
+void FieldWindow::nextPlayer()
+{
+    if(currentPlayer==1) currentPlayer=2;
+    else if(currentPlayer==2) currentPlayer=1;
+}
+
+void FieldWindow::newStatusMsg(std::string text)
+{
+    statusMessage->setText(QString::fromStdString(text));
+}
+
 void FieldWindow::fieldClicked()
 {
     auto sender = this->sender();
 
-    for(int i = 0; i< 9;i++){
-        if(sender == fieldButtons[i])
-            this->fieldButtons[i]->setText(QString::fromStdString("X"));
+    char nextSymbol[1];
+    if( currentPlayer==1)
+        nextSymbol[0]=player_symbol1;
+    else
+        nextSymbol[0]=player_symbol2;
+
+    std::printf("next Symbol %c",nextSymbol[0]);
+
+    for(unsigned i = 0; i< 9;i++){
+        if(sender == fieldButtons[i]){
+            unsigned row = i/3, col =i%3;
+            unsigned status =gameState.check_legal_move(row,col);
+            if(status == 0){
+                gameState.move(row,col,currentPlayer);
+                this->fieldButtons[i]->setText(QString::fromStdString(nextSymbol));//str(nextSymbol)));
+                nextPlayer();
+                newStatusMsg("It is your move player "+std::to_string(currentPlayer));
+            }else if(status==1) newStatusMsg("player "+std::to_string(currentPlayer)+"your move is out of the scope. How?");
+            else if(status ==2) newStatusMsg("player "+std::to_string(currentPlayer)+"this field is already picked, Choose another one");
+
+        }
     }
 
 }
