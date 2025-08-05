@@ -1,17 +1,18 @@
 #pragma once
 
+#include "../src/LogicSlave.h"
 #include <QMainWindow>
 #include <QPushButton>
 #include <QLabel>
 #include <QGridLayout>
 #include <iostream>
-#include "../src/LogicSlave.h"
 #include <string>
-//#include "../src/Logic.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class FieldWindow; }
 QT_END_NAMESPACE
+
+class LogicSlave;
 
 class FieldWindow : public QWidget
 {
@@ -20,7 +21,7 @@ class FieldWindow : public QWidget
 public:
     FieldWindow(QWidget *parent = nullptr);
     ~FieldWindow();
-    LogicSlave gameState;
+    LogicSlave* gameState;
 
     void move(unsigned x, unsigned y,unsigned player);
     //void revert();
@@ -31,7 +32,6 @@ public:
 
 
 private:
-    Ui::FieldWindow *ui;
     QPushButton *fieldButtons[9];
     short currentPlayer=1;
     char player_symbol1,player_symbol2;

@@ -20,6 +20,7 @@ public:
 
     ~LogicSlave()= default;
 
+    bool game_open;
     int start_game();
     void wait_for_move();
     unsigned check_legal_move(unsigned row, unsigned col) const;
@@ -27,13 +28,12 @@ public:
     void change_player_symbol(unsigned player,char symbol);
     void open_settings();
     void end_game();
+    unsigned check_board_win();
     void nextPlayer();
 
 private:
     unsigned move_cnt;
     unsigned currentPlayer;
-    bool game_open;
-    unsigned check_board_win();
     unsigned board [3][3]= {{0,0,0},{0,0,0},{0,0,0}};
 
 };

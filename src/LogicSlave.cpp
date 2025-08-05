@@ -8,7 +8,6 @@ int LogicSlave::start_game(){
 
     //status.clear_borard();
     game_open = true;
-    while (game_open)
     return 1;
 }
 
@@ -90,6 +89,7 @@ void LogicSlave::move(unsigned x, unsigned y,unsigned player){
     {
         board[x][y] = player;
     }
+    move_cnt++;
 }
 
 
@@ -101,7 +101,7 @@ void LogicSlave::move(unsigned x, unsigned y,unsigned player){
  */
 unsigned LogicSlave::check_legal_move(unsigned row, unsigned col) const
 {
-    if (row > 3 || col > 3 || row < 0 || col < 0) return 1;
+    if (row > 3 || col > 3) return 1;
     unsigned cell = board[row][col];
     if (cell==1||cell==2) return 2;
 
@@ -109,11 +109,11 @@ unsigned LogicSlave::check_legal_move(unsigned row, unsigned col) const
     return 0;
 }
 
-void Logic::open_settings(){
-    unsigned settingChoice;
+void LogicSlave::open_settings(){
+ /*   unsigned settingChoice;
 
     std::cout << "Welcome in the settings:"<<std::endl;
-    start:std::cout<<"For changing the Player 1 smbole: "<<status.player_symbol1<<" Please enter 11" <<std::endl;
+    start:std::cout<<"For changing the Player 1 smbole: "<<player_symbol1<<" Please enter 11" <<std::endl;
     std::cout<<"For changing the Player 2 smbole: "<<status.player_symbol2<<"    Please enter 12" <<std::endl;
     std::cout<<"Continue: Please enter 20"<<std::endl;
     std::cout<<"New Game: Please enter 21"<<std::endl;
@@ -155,26 +155,19 @@ void Logic::open_settings(){
     if(settingChoice==21) {start_game(); return;}
     if(settingChoice==22) {end_game(); return;}
     std::cout<<"Something else"<<std::endl;
-    goto start;
+    goto start;*/
 }
-void Logic::end_game(){
+void LogicSlave::end_game(){
     game_open = false;
     std::cout<<"Thank you for playing\n"<<std::endl;
 }
 
 /**
  * check if one player wins
- * @return 0: nobody won 1: player1 wins 2: player2 wins
+ * @return 0: nobody won 1: player1 wins 2: player2 wins 3: all 9 fields full without a win.
  */
 unsigned LogicSlave::check_board_win()
 {
-    unsigned board[3][3];
-
-    for(int i=0;i<3;i++)
-    {
-        for(int j=0;j<3;j++)
-            board[i][j]=status.get_borard_value(i,j);
-    }
 
     unsigned player_control_diagonal=board[1][1];
     // the left to right diagonal
@@ -199,5 +192,8 @@ unsigned LogicSlave::check_board_win()
     }
 
     // no win on the board
-    return 0;
+    if (move_cnt !=9)
+        return 0;
+    else
+        return 3;
 }

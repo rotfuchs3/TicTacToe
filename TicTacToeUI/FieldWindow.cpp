@@ -1,12 +1,12 @@
 #include "FieldWindow.h"
 
 FieldWindow::FieldWindow(QWidget *parent)
-    : QWidget(parent), gameState(LogicSlave())
+    : QWidget(parent), gameState(new LogicSlave())
     //, ui(new Ui::FieldWindow)
 {
     //ui->setupUi(this);
     for (int i = 0; i < 9; ++i)
-            fieldButtons[i] = createButton(QString::number(i),&FieldWindow::fieldClicked);
+            fieldButtons[i] = createButton(QString(""),&FieldWindow::fieldClicked);
 
     statusMessage = new QLabel(tr("Let the game start"));
 
@@ -24,11 +24,13 @@ FieldWindow::FieldWindow(QWidget *parent)
     setLayout(mainLayout);
 
     setWindowTitle(tr("TicTacToe"));
+
+    gameState->start_game();
 }
 
 FieldWindow::~FieldWindow()
 {
-    //delete ui;
+    delete gameState;
 }
 
 void FieldWindow::change_player_symbol(unsigned player,char symbol)
@@ -51,31 +53,41 @@ void FieldWindow::newStatusMsg(std::string text)
 
 void FieldWindow::fieldClicked()
 {
-    auto sender = this->sender();
+    if(gameState->game_open==true){
+        auto sender = this->sender();
 
-    char nextSymbol[1];
-    if( currentPlayer==1)
-        nextSymbol[0]=player_symbol1;
-    else
-        nextSymbol[0]=player_symbol2;
+        char nextSymbol[1];
+        if( currentPlayer==1)
+            nextSymbol[0]=player_symbol1;
+        else
+            nextSymbol[0]=player_symbol2;
 
-    std::printf("next Symbol %c",nextSymbol[0]);
+        std::printf("next Symbol %c",nextSymbol[0]);
 
-    for(unsigned i = 0; i< 9;i++){
-        if(sender == fieldButtons[i]){
-            unsigned row = i/3, col =i%3;
-            unsigned status =gameState.check_legal_move(row,col);
-            if(status == 0){
-                gameState.move(row,col,currentPlayer);
-                this->fieldButtons[i]->setText(QString::fromStdString(nextSymbol));//str(nextSymbol)));
-                nextPlayer();
-                newStatusMsg("It is your move player "+std::to_string(currentPlayer));
-            }else if(status==1) newStatusMsg("player "+std::to_string(currentPlayer)+"your move is out of the scope. How?");
-            else if(status ==2) newStatusMsg("player "+std::to_string(currentPlayer)+"this field is already picked, Choose another one");
+        for(unsigned i = 0; i< 9;i++){
+            if(sender == fieldButtons[i]){
+                unsigned row = i/3, col =i%3;
+                unsigned status =gameState->check_legal_move(row,col);
+                if(status == 0){
+                    gameState->move(row,col,currentPlayer);
+                    this->fieldButtons[i]->setText(QString::fromStdString(nextSymbol));//str(nextSymbol)));
+                    unsigned gamestatus = gameState->check_board_win();
+                    if( gamestatus == 0) {
+                        nextPlayer();
+                        newStatusMsg("It is your move player "+std::to_string(currentPlayer));
+                    }else if( gamestatus == 1||status == 2) {
+                        newStatusMsg("Congraturalation player "+std::to_string(currentPlayer)+" You won this game!");
+                        gameState->end_game();
+                    }else if(gamestatus ==3) {
+                        newStatusMsg("All fields are picked and no win. Its a draw!");
+                        gameState->end_game();
+                    }
+                }else if(status==1) newStatusMsg("player "+std::to_string(currentPlayer)+" your move is out of the scope. How?");
+                else if(status ==2) newStatusMsg("player "+std::to_string(currentPlayer)+" this field is already picked, Choose another one");
 
+            }
         }
     }
-
 }
 void FieldWindow::menuSelected()
 {
